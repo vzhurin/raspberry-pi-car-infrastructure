@@ -1,0 +1,14 @@
+- hosts: all
+  vars_files:
+    - vars/vars.yml
+  tasks:
+    - ansible.builtin.user:
+        name: "{{ service_user }}"
+        system: true
+        state: present
+      become: true
+
+  roles:
+    - role: gantsign.golang
+      vars:
+        golang_version: 1.23.0
