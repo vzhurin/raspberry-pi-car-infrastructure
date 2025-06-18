@@ -1,2 +1,11 @@
 raspberry_pi_host: 192.168.1.35
 service_user: car
+file_mode: "u=rw,g=r,o=r"
+file_mode_executable: "u=rwx,g=rx,o=rx"
+directory_mode: "u=rwx,g=rx,o=rx"
+bin_dir: /usr/local/bin/car
+bin_file: raspberry-pi-car
+archive_file: "raspberry-pi-car-v{{ software_version }}-linux-arm64.tar.gz"
+archive_url: "https://github.com/vzhurin/raspberry-pi-car/releases/download/v{{ software_version }}/{{ archive_file }}"
+archive_temp_dir: /tmp
+software_version: 0.1.0

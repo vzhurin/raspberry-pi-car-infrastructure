@@ -6,9 +6,57 @@
         name: "{{ service_user }}"
         system: true
         state: present
+        groups:
+          - gpio
+        append: yes
       become: true
 
-  roles:
-    - role: gantsign.golang
-      vars:
-        golang_version: 1.23.0
+    - ansible.builtin.file:
+        path: "{{ bin_dir }}"
+        state: directory
+        mode: "{{ directory_mode }}"
+      become: true
+
+    - ansible.builtin.get_url:
+        url: "{{ archive_url }}"
+        dest: "{{ archive_temp_dir }}/{{ archive_file }}"
+        mode: "{{ file_mode }}"
+      become: true
+
+    - ansible.builtin.unarchive:
+        src: "{{ archive_temp_dir }}/{{ archive_file }}"
+        remote_src: true
+        dest: "{{ bin_dir }}"
+        owner: "{{ service_user }}"
+        group: "{{ service_user }}"
+        mode: "{{ file_mode }}"
+      become: true
+
+    - ansible.builtin.file:
+        path: "{{ bin_dir }}/{{ bin_file }}"
+        mode: "{{ file_mode_executable }}"
+      become: true
+
+    - ansible.builtin.find:
+        path: "{{ bin_dir }}"
+        file_type: directory
+        recurse: true
+      register: unarchived_dirs
+      become: true
+
+    - ansible.builtin.file:
+        mode: "{{ directory_mode }}"
+        path: "{{ item.path }}"
+      loop: "{{ unarchived_dirs.files }}"
+      become: true
+
+    - ansible.builtin.template:
+        src: "{{ playbook_dir }}/../systemd/car.service.j2"
+        dest: "/etc/systemd/system/car.service"
+        mode: "{{ file_mode }}"
+      become: true
+
+    - ansible.builtin.systemd:
+        enabled: true
+        name: car
+      become: true
