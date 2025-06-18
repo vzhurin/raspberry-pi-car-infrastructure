@@ -2,8 +2,12 @@
 Description=Raspberry PI Car service
 
 [Service]
+Type=simple
 User={{ service_user }}
 Group={{ service_user }}
-Restart=always
+Restart=on-failure
 WorkingDirectory={{ bin_dir }}
 ExecStart={{ bin_dir }}/{{ bin_file }}
+
+[Install]
+WantedBy=multi-user.target
