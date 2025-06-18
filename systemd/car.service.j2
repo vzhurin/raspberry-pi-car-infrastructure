@@ -4,6 +4,6 @@ Description=Raspberry PI Car service
 [Service]
 User={{ service_user }}
 Group={{ service_user }}
-Restart=on-failure
+Restart=always
 WorkingDirectory={{ bin_dir }}
 ExecStart={{ bin_dir }}/{{ bin_file }}
