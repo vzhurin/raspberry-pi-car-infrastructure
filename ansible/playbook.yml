@@ -8,6 +8,7 @@
         state: present
         groups:
           - gpio
+          - input
         append: yes
       become: true
 
